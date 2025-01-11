@@ -1,21 +1,33 @@
 package main
 
-import "fmt"
+import (
+	"fmt"
+	"net/http"
+)
+
+var task1 = "Finish the Go crash course"
+var task2 = "Finish the Go Full course"
+var task3 = "Go for a run"
+var tasks = []string{task1, task2, task3}
 
 func main() {
-	// Declaring Variables
-	var appName = "MyTodoListApp"
-	// Slice - Dynamic, Array - Fixed Size
-	var tasks []string
-	// var limit = 20
+	fmt.Println("###### Welcome to Todolist App! ######")
 
-	fmt.Println("###### Welcome to Todolist App! :", appName, "######")
-	fmt.Println("### Tasks ###")
+	http.HandleFunc("/", handleUser)
+	http.HandleFunc("/show-tasks", showTasks)
 
-	tasks = addTask(tasks, "Watch Go crash course")
-	tasks = addTask(tasks, "Watch Go full course")
-	tasks = addTask(tasks, "Reward myself with a nice meal")
-	printTasks(tasks)
+	http.ListenAndServe("localhost:8080", nil)
+}
+
+func handleUser(writer http.ResponseWriter, request *http.Request) {
+	var greeting = "Hello user. Weclome to TodoList App!"
+	fmt.Fprintf(writer, greeting)
+}
+
+func showTasks(writer http.ResponseWriter, request *http.Request) {
+	for _, task := range tasks {
+		fmt.Fprintln(writer, task)
+	}
 }
 
 func addTask(tasks []string, task string) []string {
@@ -24,6 +36,7 @@ func addTask(tasks []string, task string) []string {
 }
 
 func printTasks(tasks []string) {
+	fmt.Println("### Tasks ###")
 	// Loops
 	for idx, task := range tasks {
 		fmt.Printf("%d. %s\n", idx+1, task)
